@@ -19,7 +19,7 @@ public class CategoriaDAO {
 		this.em = em;
 	}
 	
-	private void guardar(Categoria categoria) {
+	public void guardar(Categoria categoria) {
 		this.em.persist(categoria);
 	}
 	
