@@ -1,26 +1,36 @@
 package com.latam.jcvq.tienda.modelo;
 
 import java.math.BigDecimal;
-//import java.time.LocalDate;
+import java.time.LocalDate;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 /*
- *1.Creacion de entidad Producto con anotacion
- *2.Generacion de id por la DB
- *3.Atributos de la entidad
- *4.Anotacion para atribtudo categoria,muchas categorias para
+ * 1.Uso de anotacion para suprimir warning
+ * 1.1 Uso de anotacion Entity para marcar la clase como entidad
+ * 1.2 Uso de la anotacion Table, para renombrar tabla en DB
+ * 1.3 Uso de Named Queries con la anotacion NamedQuery, con parametros de: 
+ * 		1.3.1 el nombre de la consulta con la clase a la que pertenece
+ * 		1.3.2 la consulta a realizar
+ *2.Creacion de entidad Producto con anotacion
+ *3.Generacion de id por la DB
+ *4.Atributos de la entidad
+ *5.Anotacion para atribtudo categoria,muchas categorias para
  *   un producto
- *5.Constructor por default, Constructor con parametros nombre
+ *6.Constructor por default, Constructor con parametros nombre
  *   descripcion,precio,categoria 
- *6.Getters and Setters
+ *7.Getters and Setters
  */
+@SuppressWarnings("all")
 @Entity
 @Table(name="productos")
+@NamedQuery(name = "Producto.consultaDePrecio", query="SELECT P.precio FROM Producto AS P WHERE P.nombre=:nombre")
 public class Producto {
 	
 	@Id
@@ -30,7 +40,7 @@ public class Producto {
 	private String nombre;
 	private String descripcion;
 	private BigDecimal precio;
-	//private LocalDate fechaRegistro = LocalDate.now();
+	private LocalDate fechaRegistro = LocalDate.now();
 	
 	@ManyToOne
 	private Categoria categoria;

@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import com.latam.jcvq.tienda.modelo.Pedido;
+import com.latam.jcvq.tienda.vo.ReporteVenta;
 /*
  * 1.Creacion de atributo EntityManager
  * 2.Creacion de Constructor con parametro del EntityManager
@@ -16,10 +17,18 @@ import com.latam.jcvq.tienda.modelo.Pedido;
  *  3.4 Metodo de consulta a BD por medio de  id y el metodo find
  *  3.5 Metodo tipo lista para colsultar todos los productos,uso de consultas jpql en la BD
  *      y los metodos createQuery y getResultList
- *  3.6 Metodo para colsutar por nombre de producto,uso de consulta jpql y el metodo
- *      setParameter.
- *  3.7 Metodo para consultar por nombre de categoria,udo de consulta jpql 
- *  3.8 Metodo para consultar precio por nombre de producto,uso de consulta jpql 
+ *  3.6 Metodo para consultar precio por nombre de cliente,uso de consulta jpql,creacion y retorno de la consulta por
+ *      nombre de cliente
+ *      
+ *  3.7 Metodo para consultar el valor total de la venta, uso de la consulta jpql,creacion de la query y obtener el 
+ *      resultado
+ *  3.8 Metodo para consultar un reporte de ventas de extrayendo nombre de producto,cantidad vendidad y fecha de 
+ *      ultima venta. Creacion de consulta avanzada jpql uso de SUM,MAX para sumar la cantidad de item y la ultima 
+ *      fecha de comprar, obtenemos las tablas pedido,item,producto. agrupamos los nombres de producto y ordenamos 
+ *      de forma descendente, retorno llamado de entity manager, uso de un arreglo de objeto y objetenemos el resultado
+ *  4.Segunda forma de realizar la consulta utilizando una clase vo, metodo tipo lista de la clase vo Reporte venta,
+ *    Creacion de la consulta jpql con las palabra new y la ruta de la clase (permite utilizar lenguaje java en la 
+ *    consulta SQL),resto de la consulta igual al metodo anterior
  */
 public class PedidoDAO {
 
@@ -32,14 +41,13 @@ public class PedidoDAO {
 	public void guardar(Pedido pedido) {
 		this.em.persist(pedido);
 	}
-	
-	
+
 	public void actualizar(Pedido pedido) {
 		this.em.merge(pedido);
 	}
 	
 	public void remover(Pedido pedido) {
-		pedido=this.em.merge(pedido);
+		pedido=this.em.merge(pedido); 
 		this.em.remove(pedido);
 	}
 	
@@ -51,20 +59,39 @@ public class PedidoDAO {
 		String jqpl= "SELECT P FROM Pedido AS P";
 		return em.createQuery(jqpl,Pedido.class).getResultList();
 	}
-	
-	public List<Pedido> consultaPorNombre(String nombre){
-		String jpql =" SELECT P FROM Pedido AS P WHERE P.nombre=:nombre ";
-		return em.createQuery(jpql,Pedido.class).setParameter("nombre", nombre).getResultList();
-	}
-	
-	public List<Pedido> consultaPorNombreDeCategoria(String nombre){
-		String jpql="SELECT p FROM Pedido AS p WHERE p.categoria.nombre=:nombre";
-		return em.createQuery(jpql,Pedido.class).setParameter("nombre", nombre).getResultList();
-	}
 	 
-	public BigDecimal consultarPrecioPorNombreDeProducto(String nombre) {
-		String jpql="SELECT P.precio FROM Pedido AS P WHERE P.nombre=:nombre";
+	public BigDecimal consultarPrecioPorNombreDeCliente(String nombre) {
+		String jpql="SELECT C.precio FROM Cliente AS C WHERE C.nombre=:nombre";
 		return em.createQuery(jpql,BigDecimal.class).setParameter("nombre", nombre).getSingleResult();
+	}
+	
+	public BigDecimal valorTotalVenta() {
+		String jpql = "SELECT SUM(p.valor_Total) FROM Pedido p";
+		return em.createQuery(jpql,BigDecimal.class).getSingleResult();
+	}
+	
+	public List<Object[]> reporteVentas(){
+		String jpql = "SELECT producto.nombre,"
+				+"SUM(item.cantidad)," 
+				+"MAX(pedido.fecha) " 
+				+"FROM Pedido pedido "
+				+"JOIN pedido.items item "
+				+"JOIN item.producto producto "
+				+"GROUP BY producto.nombre "
+				+"ORDER BY item.cantidad DESC ";
+		return em.createQuery(jpql,Object[].class).getResultList();
+	}
+	
+	public List<ReporteVenta> reporteVentasVO(){
+		String jpql = "SELECT new com.latam.jcvq.tienda.vo.ReporteVenta(producto.nombre,"
+				+"SUM(item.cantidad)," 
+				+"MAX(pedido.fecha)) " 
+				+"FROM Pedido pedido "
+				+"JOIN pedido.items item "
+				+"JOIN item.producto producto "
+				+"GROUP BY producto.nombre "
+				+"ORDER BY item.cantidad DESC ";
+		return em.createQuery(jpql,ReporteVenta.class).getResultList();
 	}
 	
 }

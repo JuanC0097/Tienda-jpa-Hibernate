@@ -19,7 +19,9 @@ import com.latam.jcvq.tienda.modelo.Producto;
  *  3.6 Metodo para colsutar por nombre de producto,uso de consulta jpql y el metodo
  *      setParameter.
  *  3.7 Metodo para consultar por nombre de categoria,udo de consulta jpql 
- *  3.8 Metodo para consultar precio por nombre de producto,uso de consulta jpql 
+ *  3.8 Metodo para consultar precio por nombre de producto,uso de NamedQuery instanciada en entidad Producto,consulta 
+ *  	retorno uso del metodo CreateNadQuery con parametros de entidad a la cual se realiza la consulta y el metodo 
+ *      consultaDeprecio de esta misma, segundo parametro tipo de retorno de la consulta
  */
 public class ProductoDAO {
 
@@ -63,8 +65,7 @@ public class ProductoDAO {
 	}
 	 
 	public BigDecimal consultarPrecioPorNombreDeProducto(String nombre) {
-		String jpql="SELECT P.precio FROM Producto AS P WHERE P.nombre=:nombre";
-		return em.createQuery(jpql,BigDecimal.class).setParameter("nombre", nombre).getSingleResult();
+		return em.createNamedQuery("Producto.consultaDePrecio", BigDecimal.class).setParameter("nombre", nombre).getSingleResult();
 	}
 	
 }
