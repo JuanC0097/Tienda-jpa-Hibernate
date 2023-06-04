@@ -24,7 +24,5 @@ public class PruebaDeDesempeno {
 //	System.out.println(pedido.getItems().size());
 	System.out.println(pedidoConCliente.getCliente().getNombre());
 	
-	
-		
 	}
 }
