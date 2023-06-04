@@ -59,15 +59,15 @@ public class PedidoDAO {
 		String jqpl= "SELECT P FROM Pedido AS P";
 		return em.createQuery(jqpl,Pedido.class).getResultList();
 	}
-	 
-	public BigDecimal consultarPrecioPorNombreDeCliente(String nombre) {
-		String jpql="SELECT C.precio FROM Cliente AS C WHERE C.nombre=:nombre";
-		return em.createQuery(jpql,BigDecimal.class).setParameter("nombre", nombre).getSingleResult();
-	}
 	
 	public BigDecimal valorTotalVenta() {
 		String jpql = "SELECT SUM(p.valor_Total) FROM Pedido p";
 		return em.createQuery(jpql,BigDecimal.class).getSingleResult();
+	}
+	
+	public Double valorPromedioVendido() {
+		String jpql = "Select AGV(p.valortotal) FROM Pedido p";
+		return em.createQuery(jpql,Double.class).getSingleResult();
 	}
 	
 	public List<Object[]> reporteVentas(){
@@ -92,6 +92,11 @@ public class PedidoDAO {
 				+"GROUP BY producto.nombre "
 				+"ORDER BY item.cantidad DESC ";
 		return em.createQuery(jpql,ReporteVenta.class).getResultList();
+	}
+	
+	public Pedido consultarPedidoConCliente(Long id) {
+		String jpql = "SELECT p FROM Pedido p JOIN FETCH p.cliente WHERE p.id=:id";
+		return em.createQuery(jpql,Pedido.class).setParameter("id",id).getSingleResult();
 	}
 	
 }
