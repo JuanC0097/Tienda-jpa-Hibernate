@@ -8,6 +8,7 @@ import com.latam.jcvq.tienda.Utils.JPAUtils;
 import com.latam.jcvq.tienda.dao.CategoriaDAO;
 import com.latam.jcvq.tienda.dao.ProductoDAO;
 import com.latam.jcvq.tienda.modelo.Categoria;
+import com.latam.jcvq.tienda.modelo.CategoriaId;
 import com.latam.jcvq.tienda.modelo.Producto;
 
 /*
@@ -37,7 +38,9 @@ public class RegistroProducto {
 	    System.out.println(producto.getNombre());
 	    BigDecimal precio = productoDao.consultarPrecioPorNombreDeProducto("Xiaomi Redmi");
 	    System.out.println(precio);
-
+	    
+	    Categoria find = em.find(Categoria.class, new CategoriaId("CELULARES", "456"));
+	    System.out.println(find);
 	}
 	
 	
